@@ -9,13 +9,13 @@ namespace ObjPatch
         public class Options
         {
             [Option('i', "input-obj", Required = true)]
-            public string? InputObjPath { get; set; }
+            public string InputObjPath { get; set; } = String.Empty;
 
             [Option('p', "patch-obj", Required = true)]
-            public string? PatchObjPath { get; set; }
+            public string PatchObjPath { get; set; } = String.Empty;
 
             [Option('o', "out", Required = false, Default = "out.o")]
-            public string? OutObjPath { get; set; }
+            public string OutObjPath { get; set; } = String.Empty;
         }
 
         static void Main(string[] args)
@@ -25,8 +25,11 @@ namespace ObjPatch
 
         static void Run(Options opts)
         {
-            Console.WriteLine(opts.InputObjPath);
-            Console.WriteLine(opts.OutObjPath);
+            var patchStream = File.OpenRead(opts.PatchObjPath);
+            var patchElf = ElfObjectFile.Read(patchStream);
+
+            var outElfStream = File.OpenWrite(opts.OutObjPath);
+            patchElf.Write(outElfStream);
         }
     }
 }
